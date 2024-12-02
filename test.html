@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test API Form</title>
+  <script>
+    async function submitText(event) {
+      event.preventDefault();
+      
+      const textInput = document.getElementById("textInput").value;
+      const resultArea = document.getElementById("result");
+      resultArea.textContent = "Submitting...";
+
+      try {
+        const response = await fetch("http://localhost:3421/submit-text", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: textInput }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          resultArea.textContent = `Error: ${JSON.stringify(errorData, null, 2)}`;
+        } else {
+          const data = await response.json();
+          resultArea.textContent = `Response: ${JSON.stringify(data, null, 2)}`;
+        }
+      } catch (error) {
+        resultArea.textContent = `Error: ${error.message}`;
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Test API Form</h1>
+  <form id="testForm" onsubmit="submitText(event)">
+    <label for="textInput">Enter text to test:</label><br>
+    <textarea id="textInput" name="textInput" rows="5" cols="50" placeholder="Type your text here..."></textarea><br><br>
+    <button type="submit">Submit</button>
+  </form>
+  <h2>Result:</h2>
+  <pre id="result"></pre>
+</body>
+</html>
